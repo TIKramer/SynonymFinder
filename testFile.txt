@@ -1,0 +1,36 @@
+Correct!
+Wet:
+cake: 1
+in: 1
+my: 1
+shop: 1
+is: 2
+moldy: 1
+and: 1
+river: 1
+
+Correct!
+River:
+is: 1
+wet: 1
+runs: 2
+deep: 1
+in: 1
+this: 1
+town: 1
+to: 1
+many: 1
+flows: 1
+as: 1
+water: 1
+dry: 1
+
+
+Water: 
+To: 1
+many: 1
+river: 1
+flows: 1
+as: 1
+runs: 1
+dry: 1
