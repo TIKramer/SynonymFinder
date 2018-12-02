@@ -1,9 +1,7 @@
 class FileReader:
-    def __init__(self):
-            self.commonWordsFile = []
-            self.sets = []
+  
    
-    def punctuationMaker(sentence):
+    def punctuationMaker(self, sentence):
     #punctuation marks
         for ch in [',',"\'",'\"',':',';','[',']','(',')']:
             if ch in sentence:
@@ -13,7 +11,7 @@ class FileReader:
         return sentence
 
     
-    def readCommonWordsFile(commonwords_file_name = None):
+    def readCommonWordsFile(self, commonwords_file_name = None):
         common = []
         if(commonwords_file_name):
             try:
@@ -27,7 +25,7 @@ class FileReader:
         return common
     
     
-    def readSets(fileName):
+    def readSets(self,fileName):
         dictOfSets = {}
         tempWords = []
         try:
@@ -57,7 +55,7 @@ class FileReader:
             raise IOError
         return(dictOfSets)
 
-    def openFile(text):
+    def openFile(self, text):
         sentences = []
         try:
             file = open(text, 'r')
@@ -69,7 +67,7 @@ class FileReader:
                 for line in data:
                     for word in line:
                         if(word in endOfSentence):
-                            tempword = punctuationMaker(tempword.lower())
+                            tempword = self.punctuationMaker(tempword.lower())
                             sentences.append(tempword)
                             tempword = ''
                         else:

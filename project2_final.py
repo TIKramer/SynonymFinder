@@ -4,91 +4,7 @@ import time
 from Profile import Profile
 from ProfileSet import ProfileSet
 from ProfileDictionary import ProfileDictionary
-
-def readCommonWordsFile(commonwords_file_name = None):
-    common = []
-    if(commonwords_file_name):
-        try:
-            commonFile = open(commonwords_file_name,'r')
-            common = list(commonFile.read().splitlines())
-            for word in common:
-                    word = word.lower()
-        except IOError as e:
-            print("Error reading file: " + commonwords_file_name + " " + str(e) + "\n")
-            print("Running without common word file: ")
-    return common
-
-def createSets(fileName):
-    dictOfSets = {}
-    tempWords = []
-    try:
-        file = open(fileName, 'r')
-        words = file.readlines()
-        for word in words:
-            if(" " not in word.lstrip().rstrip()):
-                if word == "\n":
-                    if(tempWords):
-                        dictOfSets[tempWords[0]] = tempWords
-                        tempWords = []
-                elif (word == words[len(words)-1]):
-                    tempWords.append(word.strip("\n").lower())
-                    dictOfSets[tempWords[0]] = tempWords
-                    tempWords = []            
-                else:
-                    tempWords.append(word.strip("\n").lower())
-            else:
-                raise IOError("Error: set file has incorrect format. Check formatting of: " + fileName + " " + "\n")
-    except PermissionError as e:
-        raise IOError("Error reading file. Check file read permissions of: " + fileName + " " + str(e) + "\n")
-    except IOError as e:
-        print("Error reading set file: " + fileName + str(e))
-        raise e
-    except Exception as e:
-        print("Error reading set file: " + fileName + str(e))
-        raise IOError
-    return(dictOfSets)
-
-#Opens the text file which words are to be read from, with error handling
-def openFile(text):
-    sentences = []
-    try:
-        file = open(text, 'r')
-        sentences = []
-        endOfSentence = ['.','!','?']
-        word = ''
-        with file as data:
-            tempword = ''
-            for line in data:
-                for word in line:
-                    if(word in endOfSentence):
-                        tempword = punctuationMaker(tempword.lower())
-                        sentences.append(tempword)
-                        tempword = ''
-                    else:
-                        tempword += word
-            if(tempword.strip('\n') != ''):
-                raise IOError("Error: Reached end of file with no end of line character")
-    except PermissionError as e:
-            raise IOError("Error reading file. Check file read permissions of: " + text + " " + str(e) + "\n")
-    except IOError as e:
-        raise IOError("Error reading file: " + text + str(e))
-    except Exception as e:
-        raise IOError("Error reading file: " + text + str(e))
-    return sentences
-
-
-#Reads a file with [',',"\'",'\"',':',';','[',']','(',')'] as space characters
-#and [.,?,!] as fullstop
-def punctuationMaker(sentence):
-    #punctuation marks
-    for ch in [',',"\'",'\"',':',';','[',']','(',')']:
-        if ch in sentence:
-            sentence = sentence.replace(ch, "")
-    sentence = sentence.replace('\n', " ")
-    sentence = sentence.replace('--', " ")
-    return sentence
-
-#Creates profiles and adds associated words to each profile
+from FileReader import FileReader
 
            
 def createProfileSets(profileSets,profileDict):
@@ -114,14 +30,15 @@ def createProfileSets(profileSets,profileDict):
 #Opens text and set files, with error handling
 def fileRead(corpus_file_name, test_sets_file, commonwords_file_name = None):
     dictionaryKeys = {}
+    fileReader = FileReader()
     try:
-        sentences = openFile(corpus_file_name)
-        profileSets = createSets(test_sets_file)
+        sentences = fileReader.openFile(corpus_file_name)
+        profileSets = fileReader.readSets(test_sets_file)
         
         
         #If sentences and profiles exist, read common words file
         if(sentences and profileSets):
-            commonWords = readCommonWordsFile(commonwords_file_name);
+            commonWords = fileReader.readCommonWordsFile(commonwords_file_name);
             profileDict = ProfileDictionary(commonWords)
             uniqueProfiles = set()
             for key in profileSets:
@@ -141,9 +58,6 @@ def fileRead(corpus_file_name, test_sets_file, commonwords_file_name = None):
                 print("Error: text file is empty")
             elif numProfiles == 0:
                 print("Error: set file is empty")
-                
-        #Print sysnonym for target word is set file
-        
     except IOError as e:
         print(str(e))
   
