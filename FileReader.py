@@ -1,5 +1,11 @@
 class FileReader:
   
+
+    def getReadSetsFile(self):
+        return self.readSetsFile
+    
+    def getReadCommonWordsFile(self):
+        return self.readCommonWordFile
    
     def punctuationMaker(self, sentence):
     #punctuation marks
