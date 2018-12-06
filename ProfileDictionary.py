@@ -9,7 +9,7 @@ class ProfileDictionary:
     def __repr__(self):
         string = "Profile Dict"
         for key in self.profileDict:
-            string += self.profileDict[key].getProfileName()
+            string += "\n" + self.profileDict[key].getProfileName()
         
         return string
     

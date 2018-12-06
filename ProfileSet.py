@@ -6,8 +6,10 @@ class ProfileSet:
             self.profile = profile
             self.score = score
         
-        def getProfileName(self):
+        def getProfile(self):
             return self.profile
+        def getProfileName(self):
+            return self.profile.getProfileName()
         def getScore(self):
             return self.score
         
@@ -45,7 +47,12 @@ class ProfileSet:
             scoredProfile = self.ScoredProfile(profile,score)
             self.scoredProfiles.append(scoredProfile)
             self.sort()
-		
+    
+    def rescoreProfiles(self):
+         for profile in self.scoredProfiles:
+            profile.score = self.compareTwoProfiles(self.profile, profile.getProfile())
+            self.sort()
+            
     def compareTwoProfiles(self,profile1, profile2):
         listWordsProfile1 = profile1.getListOfWords()
         listWordsProfile2 = profile2.getListOfWords()
@@ -64,8 +71,14 @@ class ProfileSet:
         return endValue
     
     def update(self,profileName):
-        if(profileName == self.profile.get or profileName in self.scoredProfiles):
-            self.scoreProfiles(list(self.scoredProfiles.keys()))
+        runUpdate = False;
+        if(profileName == self.profile.getProfileName()):
+            runUpdate = True
+        for profile in self.scoredProfiles:
+            if profile.getProfileName() == profileName:
+                runUpdate = True;
+        if(runUpdate):
+            self.rescoreProfiles()
     
     def insertionSort(self):
       # print("Starting sort")

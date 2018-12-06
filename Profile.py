@@ -18,7 +18,7 @@ class Profile:
             self.associatedWords[str(addWord)] = 1
         else:
             self.associatedWords[str(addWord)] += 1
-            self.updateObservers()
+        self.updateObservers()
             
     def getProfileName(self):
         return self.profileName
