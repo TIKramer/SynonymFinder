@@ -1,4 +1,5 @@
 import math
+import pickle
 #insertion 
 class ProfileSet:
     class ScoredProfile:
@@ -12,11 +13,13 @@ class ProfileSet:
             return self.profile.getProfileName()
         def getScore(self):
             return self.score
+        def setScore(self, score):
+            self.score = score
         
         def __repr__(self):
             string = "Profile Name: " + str(self.profile.getProfileName()) + " Score:" + str(self.getScore())
-        
             return string
+
 
         
     def sort(self):
@@ -26,18 +29,20 @@ class ProfileSet:
         self.profile = mainProfile
         self.scoredProfiles = []
         self.scoreProfiles(unScoredProfiles)
-        mainProfile.addObservers(self)
+        self.profile.addObservers(self)
+       # for profile in unscoredProfiles:
+            #profile.addObservers(self)
 
-
+    def getName(self):
+        return self.profile.getProfileName()
     def addNewProfile(self, addNewProfile):
         if(addNewProfile not in scoredProfiles):
             self.scoredProfiles[addNewProfile] = compareTwoProfiles(self.profile, addNewProfile)
 
     def __repr__(self):
-        string = "ProfileList:\n " + str(self.profile.getProfileName()) + "\n"
+        string = "ProfileList:\n " + str(self.profile.getProfileName()) + "\n" + "ID: " + str(id(self))
         for profile in self.scoredProfiles:
-            string += "Profile: " + str(profile) + "\n"
-        
+            string += "Profile: " + str(profile) + "\n"    
         return string
 
 
@@ -49,9 +54,10 @@ class ProfileSet:
             self.sort()
     
     def rescoreProfiles(self):
-         for profile in self.scoredProfiles:
-            profile.score = self.compareTwoProfiles(self.profile, profile.getProfile())
+         for scoredProfile in self.scoredProfiles:
+            scoredProfile.setScore(self.compareTwoProfiles(self.profile, scoredProfile.getProfile()))
             self.sort()
+         print("self: ID: " + str(id(self)) + " " + str(self) )
             
     def compareTwoProfiles(self,profile1, profile2):
         listWordsProfile1 = profile1.getListOfWords()
@@ -71,15 +77,21 @@ class ProfileSet:
         return endValue
     
     def update(self,profileName):
-        runUpdate = False;
+        print("\n ----+++UPDATE+++ ---\n")
+        runUpdate = False
         if(profileName == self.profile.getProfileName()):
             runUpdate = True
         for profile in self.scoredProfiles:
             if profile.getProfileName() == profileName:
-                runUpdate = True;
+                runUpdate = True
         if(runUpdate):
+            print("DO UPDATEEE")
+            print("self: ID: " + str(id(self)) + " " + str(self) )
             self.rescoreProfiles()
-    
+            
+            
+    def getScoredProfiles(self):
+        return self.scoredProfiles
     def insertionSort(self):
       # print("Starting sort")
         
@@ -95,4 +107,4 @@ class ProfileSet:
 
          self.scoredProfiles[position]=currentvalue
          
-	
+

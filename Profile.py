@@ -1,3 +1,4 @@
+import weakref
 class Profile:
     
     def __init__(self,word):
@@ -18,7 +19,6 @@ class Profile:
             self.associatedWords[str(addWord)] = 1
         else:
             self.associatedWords[str(addWord)] += 1
-        self.updateObservers()
             
     def getProfileName(self):
         return self.profileName
@@ -30,7 +30,10 @@ class Profile:
         for word in sentence.split(' '):
             if word != self.profileName and word != '' and word not in commonWords:
                 self.addNewProfile(word)
-            
+                self.updateObservers()
+
+    def getObservers(self):
+        return observers
     def __repr__(self):
         string = "\nWord: " + self.profileName + "\n\n" + "Profile:" + "\n"
         for key in self.associatedWords:

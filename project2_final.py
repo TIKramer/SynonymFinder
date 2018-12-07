@@ -8,6 +8,7 @@ from Menu import Menu
 def main():
     fileReader = FileReader()
     profileDictionary = ProfileDictionary("")
+    #profileSet = ProfileSet()
     menu = Menu(fileReader, profileDictionary)
 
     

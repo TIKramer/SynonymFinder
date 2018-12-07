@@ -3,6 +3,7 @@ from Profile import Profile
 from ProfileSet import ProfileSet
 from ProfileDictionary import ProfileDictionary
 from FileReader import FileReader
+from Data import Data
 import pickle
 import os.path
 
@@ -15,6 +16,7 @@ class Menu:
         self.readProfileSets = []
         self.profileSets = {}
         self.uniqueProfiles = set()
+        self.data = Data()
         self.loadState()
         self.displayMenu()
         
@@ -49,23 +51,21 @@ class Menu:
                     self.createProfileSets()
                 elif(selection == "5"):
                     print(self.profileDictionary)
-                    print(self.profileSets)
+                    for profile in self.profileSets:
+                        print(str(self.profileSets[profile]))
+                        print("ID of set: " + str(id(self.profileSets[profile])))
                 elif(selection == "6"):
-                    print(self.saveState())
+                    self.saveState()
                 elif(selection == "0"):
                     menuLoop = False
                 
             except IOError as e:
                 print(str(e))
-        
                 
-
-
-        
     def createProfileDictionary(self):
         self.getUniqueProfiles(self.readProfileSets)
         if(self.sentences and self.uniqueProfiles):
-            print("\n--ADDING--")
+            ("\n--ADDING--" + str(self.uniqueProfiles))
             self.profileDictionary.addProfilesUsingSentences(self.sentences, self.uniqueProfiles)
             #self.createProfileSets()
         else:
@@ -86,50 +86,41 @@ class Menu:
     def createProfileSets(self):
         for key in self.readProfileSets:
             setName = self.readProfileSets[key][0]
-            if(setName not in self.profileDictionary.getProfiles()):
-                setProfile = Profile(setName)
-                self.profileDictionary.getProfiles()[setName] = setProfile
-            profileList = []
-            for value in self.readProfileSets[key][1:]:
-                if(value in self.profileDictionary.getProfiles()):
-                    profileList.append(self.profileDictionary.getProfiles()[value])
-                else:
-                    profile = Profile(value)
-                    self.profileDictionary.getProfiles()[value] = profile
-                    profileList.append(self.profileDictionary.getProfiles()[value])
-            self.profileSets[setName] = (ProfileSet(self.profileDictionary.getProfiles()[setName], profileList))
-
+            if(setName not in self.profileSets):
+                if(setName not in self.profileDictionary.getProfiles()):
+                    setProfile = Profile(setName)
+                    self.profileDictionary.getProfiles()[setName] = setProfile
+                profileList = []
+                for value in self.readProfileSets[key][1:]:
+                    if(value in self.profileDictionary.getProfiles()):
+                        profileList.append(self.profileDictionary.getProfiles()[value])
+                    else:
+                        profile = Profile(value)
+                        self.profileDictionary.getProfiles()[value] = profile
+                        profileList.append(self.profileDictionary.getProfiles()[value])
+                self.profileSets[setName] = (ProfileSet(self.profileDictionary.getProfiles()[setName], profileList))
 
     def saveState(self):
-        f = open("profileDictionary.pkl", 'wb')
-        pickle.dump(self.profileDictionary, f)          
-        f.close()
-        f = open("profileSets.pkl", 'wb')
-        pickle.dump(self.profileSets, f)          
-        f.close()
-        f = open("uniqueProfiles.pkl", 'wb')
-        pickle.dump(self.uniqueProfiles, f)
+        f = open("data.pkl", 'wb')
+        self.data.setProfileDictionary(self.profileDictionary)
+        self.data.setProfileSets(self.profileSets)
+        self.data.setUniqueProfiles(self.uniqueProfiles)
+        pickle.dump(self.data, f)          
         f.close()
 
-    
-    def loadState(self):
-        file = "profileDictionary.pkl"
-        if os.path.isfile(file) and os.path.getsize(file) > 0:
-            f = open('profileDictionary.pkl', 'rb')   
-            self.profileDictionary = pickle.load(f)
-            f.close()
-            print("readFile")
-        file = "profileSets.pkl"
-        if os.path.isfile(file) and os.path.getsize(file) > 0:
-            f = open(file, 'rb')   
-            self.profileSets = pickle.load(f)
-            f.close()
-            print("readFile")
-        file = "uniqueProfiles.pkl"    
-        if os.path.isfile(file) and os.path.getsize(file) > 0:
-            f = open(file, 'rb')   
-            self.uniqueProfiles = pickle.load(f)
-            f.close()
-            print("readFile")
+
+ 
         
+    def loadState(self):
+        file = "data.pkl"
+        if os.path.isfile(file) and os.path.getsize(file) > 0:
+            f = open(file, 'rb')   
+            self.data = pickle.load(f)
+            self.profileDictionary = self.data.getProfileDictionary()
+            self.profileSets = self.data.getProfileSets()
+            self.uniqueProfiles = self.data.getUniqueProfiles()
+            f.close()
+            print("readFile")
+           
+
     
